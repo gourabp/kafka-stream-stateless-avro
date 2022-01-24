@@ -1,8 +1,11 @@
 package com.magicalpipelines;
 
 import com.magicalpipelines.language.LanguageClient;
+import com.magicalpipelines.model.EntitySentiment;
 import com.magicalpipelines.serialization.Tweet;
+//import com.magicalpipelines.serialization.avro.AvroSerdes;
 import com.magicalpipelines.serialization.json.TweetSerdes;
+import com.mitchseymour.kafka.serialization.avro.AvroSerdes;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
@@ -64,7 +67,7 @@ public class MCryptoTopology {
         merged.print(Printed.<byte[], Tweet>toSysOut().withLabel("mergedStream"));
 
 
-       /* KStream<byte[], EntitySentiment> enriched =
+        KStream<byte[], EntitySentiment> enriched =
                 merged.flatMapValues(
                         (tweet) -> {
                             List<EntitySentiment> results = languageClient.getEntitySentiment(tweet);
@@ -73,9 +76,20 @@ public class MCryptoTopology {
                                     entitySentiment -> !currencies.contains(entitySentiment.getEntity()));
 
                             return results;
-                        });*/
+                        });
 
-           merged.to("crypto-sentiment",Produced.with(Serdes.ByteArray(),new TweetSerdes()));
+
+
+        enriched.to(
+                "crypto-sentiment",
+                Produced.with(
+                        Serdes.ByteArray(), AvroSerdes.get(EntitySentiment.class)));
+
+        /*enriched.to(
+                "crypto-sentiment",
+                Produced.with(
+                        Serdes.ByteArray(), AvroSerdes.EntitySentiment("http://localhost:8081", false)));
+*/
 
         return builder.build();
     }

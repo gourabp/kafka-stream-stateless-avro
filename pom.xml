@@ -12,6 +12,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <kafkaVersion>2.7.0</kafkaVersion>
+        <avroVersion>1.11.0</avroVersion>
     </properties>
 
     <dependencies>
@@ -31,19 +32,19 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.11.0</version>
+            <version> ${avroVersion}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-compiler</artifactId>
-            <version>1.11.0</version>
+            <version>${avroVersion}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-maven-plugin</artifactId>
-            <version>1.11.0</version>
+            <version>${avroVersion}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.confluent/kafka-streams-avro-serde -->
@@ -85,6 +86,12 @@
             <version>3.15.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.mitchseymour</groupId>
+            <artifactId>kafka-registryless-avro-serdes</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -93,7 +100,7 @@
 
     <build>
      <plugins>
-         <!--    <plugin>
+             <plugin>
                <groupId>org.apache.avro</groupId>
                <artifactId>avro-maven-plugin</artifactId>
                <version>1.11.0</version>
@@ -102,23 +109,25 @@
                            <phase>generate-sources</phase>
                            <goals>
                                <goal>schema</goal>
+                               <goal>protocol</goal>
+                               <goal>idl-protocol</goal>
                            </goals>
                            <configuration>
                                <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
                                <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                               <stringType>String</stringType>
+                               <createSetters>false</createSetters>
+                               <enableDecimalLogicalType>true</enableDecimalLogicalType>
+                               <fieldVisibility>private</fieldVisibility>
                            </configuration>
                        </execution>
                    </executions>
-               </plugin>-->
+               </plugin>
 
-           <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-compiler-plugin</artifactId>
-               <configuration>
-                   <source>1.8</source>
-                   <target>1.8</target>
-               </configuration>
-           </plugin>
+
+
+
+
 
         </plugins>
     </build>

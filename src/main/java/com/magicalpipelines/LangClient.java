@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class LangClient implements LanguageClient {
+public class LangClient implements LanguageClient
+{
 
-    @Override
+   // @Override
     public Tweet translate(Tweet tweet, String targetLanguage) {
         tweet.setText("Translated: " + tweet.getText());
         return tweet;
@@ -22,16 +23,18 @@ public class LangClient implements LanguageClient {
 
         Iterable<String> words = Splitter.on(' ').split(tweet.getText().toLowerCase().replace("#", ""));
         for (String entity : words) {
-            EntitySentiment entitySentiment = new EntitySentiment();
-            entitySentiment.setCreatedAt(tweet.getCreatedAt());
-            entitySentiment.setId(tweet.getId());
-            entitySentiment.setEntity(entity);
-            entitySentiment.setText(tweet.getText());
-            entitySentiment.setSalience(randomDouble());
-            entitySentiment.setSentimentScore(randomDouble());
-            entitySentiment.setSentimentMagnitude(randomDouble());
 
+            EntitySentiment.Builder entitySentimentBuilder = EntitySentiment.newBuilder();
 
+            entitySentimentBuilder.setCreatedAt(tweet.getCreatedAt());
+            entitySentimentBuilder.setId(tweet.getId());
+            entitySentimentBuilder.setEntity(entity);
+            entitySentimentBuilder.setText(tweet.getText());
+            entitySentimentBuilder.setSalience(randomDouble());
+            entitySentimentBuilder.setSentimentScore(randomDouble());
+            entitySentimentBuilder.setSentimentMagnitude(randomDouble());
+
+            EntitySentiment entitySentiment = entitySentimentBuilder.build();
             results.add(entitySentiment);
         }
         return results;
